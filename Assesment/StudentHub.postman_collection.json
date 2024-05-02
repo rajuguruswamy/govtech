@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "1d23c458-c7a8-408d-98e9-d684238b8437",
+		"_postman_id": "584345f0-0562-473a-b1f5-7ea3640e6e60",
 		"name": "StudentHub",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "13953478"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -15,14 +14,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/teachers",
+							"raw": "http://localhost:3000/teachers/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"teachers"
+								"teachers",
+								""
 							]
 						}
 					},
@@ -35,7 +35,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"Raju\",\r\n    \"email\":\"raju@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"name\":\"stevenson\",\r\n    \"email\":\"stevenson@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -57,12 +57,21 @@
 					"response": []
 				},
 				{
-					"name": "Get Teacher By Id",
+					"name": "Register Students to Teacher",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"teacherEmail\": \"stevenson@gmail.com\",\r\n  \"studentEmails\": [\"student4@gmail.com\",\"student5@gmail.com\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:3000/teachers/2",
+							"raw": "http://localhost:3000/teachers/register",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -70,7 +79,115 @@
 							"port": "3000",
 							"path": [
 								"teachers",
-								"2"
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve Recipient For Notifications",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"teacher\": \"stevenson@gmail.com\",\r\n  \"notification\": \"Hello students! @studentagnes@example.com @studentmiche@example.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/teachers/retrievefornotifications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"teachers",
+								"retrievefornotifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Suspend Student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n    \"student\":\"student44@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/teachers/suspend",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"teachers",
+								"suspend"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Teacher By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/teachers/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"teachers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Teacher Common students",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/teachers/commonstudents?teacher=stevenson@gmail.com&teacher=raju@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"teachers",
+								"commonstudents"
+							],
+							"query": [
+								{
+									"key": "teacher",
+									"value": "stevenson@gmail.com"
+								},
+								{
+									"key": "teacher",
+									"value": "raju@gmail.com"
+								}
 							]
 						}
 					},
@@ -196,7 +313,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"student22\",\r\n    \"email\":\"student22@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"name\":\"student1\",\r\n    \"email\":\"student1@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -204,7 +321,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/students/2",
+							"raw": "http://localhost:3000/students/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -212,7 +329,7 @@
 							"port": "3000",
 							"path": [
 								"students",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -225,7 +342,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"student3\",\r\n    \"email\":\"student3@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"name\":\"student5\",\r\n    \"email\":\"student5@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
