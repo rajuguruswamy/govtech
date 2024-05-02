@@ -17,6 +17,7 @@ import { UpdateTeacherDto } from '../dto/update-teacher.dto';
 import { TeacherEntity } from '../entities/teacher.entity';
 import { RegisterStudentsToTeachertDto } from '../dto/register-students-to-teacher-dto';
 import { CommonStudentsResponseDto } from '../dto/common-students.dto';
+import { SuspendStudentDto } from '../dto/suspend-student.dto';
 
 @Controller('teachers')
 export class TeachersController {
@@ -31,6 +32,7 @@ export class TeachersController {
     await this.teacherService.registerStudents(registerStudentsToTeachertDto);
   }
 
+  // get common students
   @Get('commonstudents')
   async getCommonStudents(
     @Query('teacher') teacherEmail: string[],
@@ -53,6 +55,16 @@ export class TeachersController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  // suspend student
+  @Post('suspend')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async suspendStudent(
+    @Body() suspendStudentDto: SuspendStudentDto,
+  ): Promise<void> {
+    console.log(suspendStudentDto.student);
+    await this.teacherService.suspendStudent(suspendStudentDto);
   }
 
   //  create new teacher

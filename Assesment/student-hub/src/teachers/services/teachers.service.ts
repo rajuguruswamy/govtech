@@ -7,6 +7,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { TeacherEntity } from '../entities/teacher.entity';
 import { StudentEntity } from '../../students/entities/student.entity';
+import { SuspendStudentDto } from '../dto/suspend-student.dto';
+import { StudentsService } from '../../students/services/students.service';
 
 @Injectable()
 export class TeachersService {
@@ -15,6 +17,7 @@ export class TeachersService {
     private readonly teacherRepository: Repository<TeacherEntity>,
     @InjectRepository(StudentEntity)
     private readonly studentRepository: Repository<StudentEntity>,
+    private readonly studentsService: StudentsService,
   ) {}
 
   // register one or more students to a specified teacher.
@@ -68,6 +71,11 @@ export class TeachersService {
     const studentEmails = students.map((student) => student.email);
 
     return studentEmails;
+  }
+
+  // Suspend student
+  async suspendStudent(suspendStudentDto: SuspendStudentDto): Promise<void> {
+    await this.studentsService.suspendStudent(suspendStudentDto.student);
   }
 
   // create teacher
