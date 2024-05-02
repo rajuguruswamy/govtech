@@ -18,6 +18,8 @@ import { TeacherEntity } from '../entities/teacher.entity';
 import { RegisterStudentsToTeachertDto } from '../dto/register-students-to-teacher-dto';
 import { CommonStudentsResponseDto } from '../dto/common-students.dto';
 import { SuspendStudentDto } from '../dto/suspend-student.dto';
+import { NotificationRecipientsDto } from '../dto/notification-recipients.dto';
+import { NotificationRequestDto } from '../dto/notification-request.dto';
 
 @Controller('teachers')
 export class TeachersController {
@@ -65,6 +67,32 @@ export class TeachersController {
   ): Promise<void> {
     console.log(suspendStudentDto.student);
     await this.teacherService.suspendStudent(suspendStudentDto);
+  }
+
+  //retrievefornotifications
+  @Post('retrievefornotifications')
+  async retrieveForNotifications(
+    @Body() notificationRequestDto: NotificationRequestDto,
+  ): Promise<NotificationRecipientsDto> {
+    // try {
+    //   const recipients = await this.teacherService.retrieveForNotifications(
+    //     notificationRequestDto,
+    //   );
+    //   return { recipients: recipients };
+    // } catch (error) {
+    //   throw new HttpException(
+    //     {
+    //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+    //       error: 'Internal Server Error',
+    //       message: 'An error occurred while retrieving students for noti.',
+    //     },
+    //     HttpStatus.INTERNAL_SERVER_ERROR,
+    //   );
+    // }
+    const recipients = await this.teacherService.retrieveForNotifications(
+      notificationRequestDto,
+    );
+    return { recipients: recipients };
   }
 
   //  create new teacher

@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StudentEntity } from '../entities/student.entity';
 import { Repository } from 'typeorm';
+
+import { StudentEntity } from '../entities/student.entity';
 import { CreateStudentDto } from '../dto/create-student.dto';
 import { UpdateStudentDto } from '../dto/update-student.dto';
 
@@ -14,7 +15,7 @@ export class StudentsService {
 
   // suspend student
   async suspendStudent(email: string): Promise<void> {
-    console.log(email);
+    // console.log(email);
 
     if (!email) {
       throw new NotFoundException('Student email is null or empty');
@@ -23,7 +24,7 @@ export class StudentsService {
     const student = await this.studentRepository.findOne({
       where: { email: email },
     });
-    console.log('suspendStudent :', student);
+    // console.log('suspendStudent :', student);
 
     if (!student) {
       throw new NotFoundException(`Student with the email ${email} not found`);

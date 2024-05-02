@@ -7,10 +7,11 @@ import {
   Put,
   Param,
 } from '@nestjs/common';
+
 import { StudentsService } from '../services/students.service';
 import { CreateStudentDto } from '../dto/create-student.dto';
-import { StudentEntity } from '../entities/student.entity';
 import { UpdateStudentDto } from '../dto/update-student.dto';
+import { StudentEntity } from '../entities/student.entity';
 
 @Controller('students')
 export class StudentsController {

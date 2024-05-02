@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, Repository } from 'typeorm';
+
 import { CreateTeacherDto } from '../dto/create-teacher.dto';
 import { UpdateTeacherDto } from '../dto/update-teacher.dto';
 import { RegisterStudentsToTeachertDto } from '../dto/register-students-to-teacher-dto';
-
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { SuspendStudentDto } from '../dto/suspend-student.dto';
+import { NotificationRequestDto } from '../dto/notification-request.dto';
 import { TeacherEntity } from '../entities/teacher.entity';
 import { StudentEntity } from '../../students/entities/student.entity';
-import { SuspendStudentDto } from '../dto/suspend-student.dto';
 import { StudentsService } from '../../students/services/students.service';
 
 @Injectable()
@@ -78,6 +79,27 @@ export class TeachersService {
     await this.studentsService.suspendStudent(suspendStudentDto.student);
   }
 
+  // retrieve recipients for notification
+  async retrieveForNotifications(
+    notificationRequestDto: NotificationRequestDto,
+  ): Promise<string[]> {
+    // TODO :  Throw execption if teacher email is null / empty / teacher email does not exist in the db
+
+    const teachersEmailArray = [notificationRequestDto.teacher];
+
+    const mentionedStudents = this.extractMentionedStudents(
+      notificationRequestDto.notification,
+    );
+
+    const registeredStudents =
+      await this.retriveCommonStudents(teachersEmailArray);
+    const recipients = [
+      ...new Set([...mentionedStudents, ...registeredStudents]),
+    ];
+
+    return recipients;
+  }
+
   // create teacher
   async create(createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {
     const teacher = this.teacherRepository.create(createTeacherDto);
@@ -107,5 +129,16 @@ export class TeachersService {
   // remove teacher
   async remove(id: number): Promise<void> {
     await this.teacherRepository.delete(id);
+  }
+
+  // function to extract email address from input string to string array
+  private extractMentionedStudents(notification: string): string[] {
+    const mentionedStudentsRegex = /@(\w+@\w+\.\w+)/g;
+    // const emailRegex = /(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b)/g;
+    return (
+      notification
+        .match(mentionedStudentsRegex)
+        ?.map((mention) => mention.substring(1)) || []
+    );
   }
 }
