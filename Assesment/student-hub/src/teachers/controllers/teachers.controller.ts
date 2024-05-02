@@ -19,7 +19,7 @@ import { TeacherEntity } from '../entities/teacher.entity';
 export class TeachersController {
   constructor(private readonly teacherService: TeachersService) {}
 
-  // register one or more students to a specified teacher.
+  // //register one or more students to a specified teacher.
   // @Post('register')
   // @HttpCode(HttpStatus.NO_CONTENT)
   // async registerStudents(
