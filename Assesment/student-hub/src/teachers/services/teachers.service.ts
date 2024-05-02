@@ -1,55 +1,74 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTeacherDto } from '../dto/create-teacher.dto';
 import { UpdateTeacherDto } from '../dto/update-teacher.dto';
-// import { RegisterStudentsToTeachertDto } from '../dto/register-students-to-teacher-dto';
+import { RegisterStudentsToTeachertDto } from '../dto/register-students-to-teacher-dto';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { TeacherEntity } from '../entities/teacher.entity';
-// import { StudentEntity } from 'src/students/entities/StudentEntity';
+import { StudentEntity } from '../../students/entities/student.entity';
 
 @Injectable()
 export class TeachersService {
   constructor(
     @InjectRepository(TeacherEntity)
     private readonly teacherRepository: Repository<TeacherEntity>,
-    // @InjectRepository(StudentEntity)
-    // private readonly studentRepository: Repository<StudentEntity>,
+    @InjectRepository(StudentEntity)
+    private readonly studentRepository: Repository<StudentEntity>,
   ) {}
 
   // register one or more students to a specified teacher.
-  // async registerStudents(
-  //   registerStudentsToTeachertDto: RegisterStudentsToTeachertDto,
-  // ): Promise<void> {
-  //   const teacher = await this.teacherRepository.findOne({
-  //     where: { email: registerStudentsToTeachertDto.teacherEmail },
-  //   });
+  async registerStudents(
+    registerStudentsToTeachertDto: RegisterStudentsToTeachertDto,
+  ): Promise<void> {
+    const teacher = await this.teacherRepository.findOne({
+      where: { email: registerStudentsToTeachertDto.teacherEmail },
+    });
 
-  //   //  throw exception if teacher emaail does not exist
-  //   if (!teacher) {
-  //     throw new NotFoundException(
-  //       `Teacher with the email ${registerStudentsToTeachertDto.teacherEmail} not found`,
-  //     );
-  //   }
+    //  throw exception if teacher email does not exist
+    if (!teacher) {
+      throw new NotFoundException(
+        `Teacher with the email ${registerStudentsToTeachertDto.teacherEmail} not found`,
+      );
+    }
 
-  //   const students = await Promise.all(
-  //     registerStudentsToTeachertDto.studentEmails.map(async (studentEmail) => {
-  //       const student = await this.studentRepository.findOne({
-  //         where: { email: studentEmail },
-  //       });
+    const students = await Promise.all(
+      registerStudentsToTeachertDto.studentEmails.map(async (studentEmail) => {
+        const student = await this.studentRepository.findOne({
+          where: { email: studentEmail },
+        });
 
-  //       if (!student) {
-  //         throw new NotFoundException(
-  //           `Stduent with the email ${studentEmail} not found`,
-  //         );
-  //       }
-  //       return student;
-  //     }),
-  //   );
+        if (!student) {
+          throw new NotFoundException(
+            `Stduent with the email ${studentEmail} not found`,
+          );
+        }
+        return student;
+      }),
+    );
 
-  //   teacher.students = students;
-  //   await this.teacherRepository.save(teacher);
-  // }
+    teacher.students = students;
+    await this.teacherRepository.save(teacher);
+  }
+
+  // retrieve students who are registered to ALL of the given teachers
+  async retriveCommonStudents(teachersEmail: string[]): Promise<string[]> {
+    const teachers = await this.teacherRepository.find({
+      where: { email: In(teachersEmail) }, // Use In operator
+    });
+
+    const teacherIds = teachers.map((teacher) => teacher.id);
+    // console.log('Teacher id ===========>', teacherIds);
+
+    const students = await this.studentRepository
+      .createQueryBuilder('student')
+      .innerJoin('student.teachers', 'teacher')
+      .where('teacher.id IN (:...teacherIds)', { teacherIds })
+      .getMany();
+    const studentEmails = students.map((student) => student.email);
+
+    return studentEmails;
+  }
 
   // create teacher
   async create(createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {
