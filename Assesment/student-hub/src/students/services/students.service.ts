@@ -14,9 +14,7 @@ export class StudentsService {
   ) {}
 
   // suspend student
-  async suspendStudent(email: string): Promise<void> {
-    // console.log(email);
-
+  async suspend(email: string): Promise<void> {
     if (!email) {
       throw new NotFoundException('Student email is null or empty');
     }
@@ -24,7 +22,6 @@ export class StudentsService {
     const student = await this.studentRepository.findOne({
       where: { email: email },
     });
-    // console.log('suspendStudent :', student);
 
     if (!student) {
       throw new NotFoundException(`Student with the email ${email} not found`);

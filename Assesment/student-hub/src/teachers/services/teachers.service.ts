@@ -78,7 +78,7 @@ export class TeachersService {
 
   // Suspend student
   async suspendStudent(suspendStudentDto: SuspendStudentDto): Promise<void> {
-    await this.studentsService.suspendStudent(suspendStudentDto.student);
+    await this.studentsService.suspend(suspendStudentDto.student);
   }
 
   // Retrieve recipients for notification
@@ -120,15 +120,13 @@ export class TeachersService {
   }
 
   // get teacher by email
-  private async getTechacherByEmail(
-    teacherEmail: string,
-  ): Promise<TeacherEntity> {
+  async getTechacherByEmail(teacherEmail: string): Promise<TeacherEntity> {
     return await this.teacherRepository.findOne({
       where: { email: teacherEmail },
     });
   }
   // function to retrieve registerd student email
-  private async getRegisteredStudentsEmail(teacherEmail: string) {
+  async getRegisteredStudentsEmail(teacherEmail: string) {
     return await this.studentRepository
       .createQueryBuilder('student')
       .select('student.email')
@@ -142,10 +140,10 @@ export class TeachersService {
   }
 
   // function to retrieve student email
-  private async getMentionedStudentsEmail(
+  async getMentionedStudentsEmail(
     mentionedStudents: string[],
   ): Promise<StudentEntity[]> {
-    if (mentionedStudents.length == 0 || mentionedStudents == null) {
+    if (mentionedStudents.length == 0) {
       return [];
     }
 
@@ -201,7 +199,7 @@ export class TeachersService {
   }
 
   // function to extract email address from input string to string array
-  private extractMentionedStudents(notification: string): string[] {
+  extractMentionedStudents(notification: string): string[] {
     const mentionedStudentsRegex = /@(\w+@\w+\.\w+)/g;
     // const emailRegex = /(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b)/g;
     return (
