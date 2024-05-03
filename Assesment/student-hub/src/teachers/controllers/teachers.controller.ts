@@ -21,11 +21,11 @@ import { SuspendStudentDto } from '../dto/suspend-student.dto';
 import { NotificationRecipientsDto } from '../dto/notification-recipients.dto';
 import { NotificationRequestDto } from '../dto/notification-request.dto';
 
-@Controller('teachers')
+@Controller('/api')
 export class TeachersController {
   constructor(private readonly teacherService: TeachersService) {}
 
-  //register one or more students to a specified teacher.
+  //Register one or more students to a specified teacher.
   @Post('register')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registerStudents(
@@ -34,8 +34,9 @@ export class TeachersController {
     await this.teacherService.registerStudents(registerStudentsToTeachertDto);
   }
 
-  // get common students
-  @Get('commonstudents')
+  // Get common students
+  @Get('/commonstudents')
+  @HttpCode(HttpStatus.OK)
   async getCommonStudents(
     @Query('teacher') teacherEmail: string[],
   ): Promise<CommonStudentsResponseDto> {
@@ -59,8 +60,8 @@ export class TeachersController {
     }
   }
 
-  // suspend student
-  @Post('suspend')
+  // Suspend student
+  @Post('/suspend')
   @HttpCode(HttpStatus.NO_CONTENT)
   async suspendStudent(
     @Body() suspendStudentDto: SuspendStudentDto,
@@ -69,54 +70,38 @@ export class TeachersController {
     await this.teacherService.suspendStudent(suspendStudentDto);
   }
 
-  //retrievefornotifications
-  @Post('retrievefornotifications')
+  //Retrieve  student email for notifications
+  @Post('/retrievefornotifications')
+  @HttpCode(HttpStatus.OK)
   async retrieveForNotifications(
     @Body() notificationRequestDto: NotificationRequestDto,
   ): Promise<NotificationRecipientsDto> {
-    // try {
-    //   const recipients = await this.teacherService.retrieveForNotifications(
-    //     notificationRequestDto,
-    //   );
-    //   return { recipients: recipients };
-    // } catch (error) {
-    //   throw new HttpException(
-    //     {
-    //       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-    //       error: 'Internal Server Error',
-    //       message: 'An error occurred while retrieving students for noti.',
-    //     },
-    //     HttpStatus.INTERNAL_SERVER_ERROR,
-    //   );
-    // }
     const recipients = await this.teacherService.retrieveForNotifications(
       notificationRequestDto,
     );
     return { recipients: recipients };
   }
 
-  //  create new teacher
-  @Post()
+  //  Create new teacher
+  @Post('/teachers')
   create(@Body() createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {
     return this.teacherService.create(createTeacherDto);
   }
 
-  //  get all  teachers
-  @Get()
+  //  Get all teachers
+  @Get('/teachers')
   findAll(): Promise<TeacherEntity[]> {
-    console.log('findAll');
     return this.teacherService.findAll();
   }
 
-  //  get  a teacher record by id
-  @Get(':id')
+  //  Get  a teacher record by id
+  @Get('/teachers/:id')
   findOne(@Param('id') id: number): Promise<TeacherEntity> {
-    console.log('findOne');
     return this.teacherService.findOne(id);
   }
 
-  // update teacher by teacher id
-  @Put(':id')
+  // Update teacher by teacher id
+  @Put('/teachers/:id')
   update(
     @Param('id') id: number,
     @Body() updateTeacherDto: UpdateTeacherDto,
@@ -124,8 +109,8 @@ export class TeachersController {
     return this.teacherService.update(id, updateTeacherDto);
   }
 
-  // delete  a teacher record by id
-  @Delete(':id')
+  // Delete  a teacher record by id
+  @Delete('/teachers/:id')
   remove(@Param('id') id: number): Promise<void> {
     return this.teacherService.remove(id);
   }

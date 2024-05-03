@@ -12,12 +12,15 @@ import { Global, Module } from '@nestjs/common';
         try {
           const dataSource = new DataSource({
             type: 'postgres',
-            host: 'localhost',
-            port: 5432,
-            username: 'postgres',
-            password: 'mysecretpassword',
-            database: 'student_hub',
-            synchronize: true,
+            host: process.env.DATABASE_HOSTNAME,
+            port: parseInt(process.env.DATABASE_PORT),
+            username: process.env.DATABASE_USERNAME,
+            password: process.env.DATABASE_PASSWORD,
+            database: process.env.DATABASE_NAME,
+            synchronize:
+              process.env.SYNC_DB === 'true' && process.env.NODE_ENV === 'DEV'
+                ? true
+                : false,
             entities: [`${__dirname}/../**/**.entity{.ts,.js}`],
           });
           await dataSource.initialize(); // initialize the data source

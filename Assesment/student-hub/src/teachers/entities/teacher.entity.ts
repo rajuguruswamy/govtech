@@ -15,9 +15,6 @@ export class TeacherEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  name: string;
-
   @ManyToMany(() => StudentEntity, (student) => student.teachers)
   @JoinTable({
     name: 'teacher_student',

@@ -54,6 +54,7 @@ export class StudentsService {
       where: { email: studentEmail },
     });
   }
+
   //  update student Record by studentId
   async update(
     studentId: number,

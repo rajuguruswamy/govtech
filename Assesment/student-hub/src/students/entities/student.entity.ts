@@ -9,9 +9,6 @@ export class StudentEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column({ unique: true })
-  name: string;
-
   @Column({ default: false, nullable: false })
   isSuspended: boolean;
 

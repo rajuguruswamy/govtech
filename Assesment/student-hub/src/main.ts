@@ -1,21 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
+  dotenv.config();
   const app = await NestFactory.create(AppModule);
-  const config = SwaggerModule.createDocument(
-    app,
-    new DocumentBuilder()
-      .setTitle('Student Hub')
-      .setDescription(
-        'Student Hub allows Teachers to perform administrative functions for their students',
-      )
-      .setVersion('1.0')
-      .build(),
-  );
 
-  SwaggerModule.setup('Student Hub API', app, config);
-  await app.listen(3000);
+  const port = process.env.NODE_PORT || 3000;
+  await app.listen(port);
+  console.log(
+    `Student Hub API is running on port ${port} in ${process.env.NODE_ENV} mode`,
+  );
 }
 bootstrap();

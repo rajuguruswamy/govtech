@@ -10,6 +10,7 @@ import { NotificationRequestDto } from '../dto/notification-request.dto';
 import { TeacherEntity } from '../entities/teacher.entity';
 import { StudentEntity } from '../../students/entities/student.entity';
 import { StudentsService } from '../../students/services/students.service';
+import { DuplicateRecordException } from '../../exceptions/duplicate-record.exception';
 
 @Injectable()
 export class TeachersService {
@@ -21,13 +22,13 @@ export class TeachersService {
     private readonly studentsService: StudentsService,
   ) {}
 
-  // register one or more students to a specified teacher.
+  // Register one or more students to a specified teacher.
   async registerStudents(
     registerStudentsToTeachertDto: RegisterStudentsToTeachertDto,
   ): Promise<void> {
-    const teacher = await this.teacherRepository.findOne({
-      where: { email: registerStudentsToTeachertDto.teacherEmail },
-    });
+    const teacher = await this.getTechacherByEmail(
+      registerStudentsToTeachertDto.teacherEmail,
+    );
 
     //  throw exception if teacher email does not exist
     if (!teacher) {
@@ -38,9 +39,8 @@ export class TeachersService {
 
     const students = await Promise.all(
       registerStudentsToTeachertDto.studentEmails.map(async (studentEmail) => {
-        const student = await this.studentRepository.findOne({
-          where: { email: studentEmail },
-        });
+        const student =
+          await this.studentsService.findStudentByEmail(studentEmail);
 
         if (!student) {
           throw new NotFoundException(
@@ -55,10 +55,10 @@ export class TeachersService {
     await this.teacherRepository.save(teacher);
   }
 
-  // retrieve students who are registered to ALL of the given teachers
-  async retriveCommonStudents(teachersEmail: string[]): Promise<string[]> {
+  // Retrieve students who are registered to ALL of the given teachers
+  async retriveCommonStudents(teachersEmails: string[]): Promise<string[]> {
     const teachers = await this.teacherRepository.find({
-      where: { email: In(teachersEmail) }, // Use In operator
+      where: { email: In(teachersEmails) }, // Use In operator
     });
 
     const teacherIds = teachers.map((teacher) => teacher.id);
@@ -68,6 +68,8 @@ export class TeachersService {
       .createQueryBuilder('student')
       .innerJoin('student.teachers', 'teacher')
       .where('teacher.id IN (:...teacherIds)', { teacherIds })
+      .groupBy('student.id')
+      .having('count(distinct teacher.id) = :len', { len: teacherIds.length })
       .getMany();
     const studentEmails = students.map((student) => student.email);
 
@@ -79,44 +81,111 @@ export class TeachersService {
     await this.studentsService.suspendStudent(suspendStudentDto.student);
   }
 
-  // retrieve recipients for notification
+  // Retrieve recipients for notification
   async retrieveForNotifications(
     notificationRequestDto: NotificationRequestDto,
   ): Promise<string[]> {
-    // TODO :  Throw execption if teacher email is null / empty / teacher email does not exist in the db
+    // check if teacher email is null or empty
+    if (!notificationRequestDto.teacher) {
+      throw new NotFoundException('Teacher email is null or empty');
+    }
 
-    const teachersEmailArray = [notificationRequestDto.teacher];
+    // check if the teacher email exists in the system
+    const teacher = this.getTechacherByEmail(notificationRequestDto.teacher);
+    if (!teacher) {
+      throw new NotFoundException(
+        `Teacher with the email ${notificationRequestDto.teacher} not found`,
+      );
+    }
 
+    // extract email from notification
     const mentionedStudents = this.extractMentionedStudents(
       notificationRequestDto.notification,
     );
 
-    const registeredStudents =
-      await this.retriveCommonStudents(teachersEmailArray);
-    const recipients = [
-      ...new Set([...mentionedStudents, ...registeredStudents]),
-    ];
+    // retrieve mentioned students only if not suspened and exists in the system.
+    const mentionedEmails =
+      await this.getMentionedStudentsEmail(mentionedStudents);
 
-    return recipients;
+    // retrieve mentioned students only if not suspened and registed with teacher
+    const registeredEmails = await this.getRegisteredStudentsEmail(
+      notificationRequestDto.teacher,
+    );
+
+    const recipients = [
+      ...new Set([...mentionedEmails, ...registeredEmails]),
+    ].map((student) => student.email);
+
+    return recipients.sort();
   }
 
-  // create teacher
+  // get teacher by email
+  private async getTechacherByEmail(
+    teacherEmail: string,
+  ): Promise<TeacherEntity> {
+    return await this.teacherRepository.findOne({
+      where: { email: teacherEmail },
+    });
+  }
+  // function to retrieve registerd student email
+  private async getRegisteredStudentsEmail(teacherEmail: string) {
+    return await this.studentRepository
+      .createQueryBuilder('student')
+      .select('student.email')
+      .innerJoin('student.teachers', 'teacher')
+      .where('teacher.email  = :teacherEmail', {
+        teacherEmail: teacherEmail,
+      })
+      .andWhere('student.isSuspended = :isSuspended', { isSuspended: false })
+      .orderBy('student.email', 'ASC')
+      .getMany();
+  }
+
+  // function to retrieve student email
+  private async getMentionedStudentsEmail(
+    mentionedStudents: string[],
+  ): Promise<StudentEntity[]> {
+    if (mentionedStudents.length == 0 || mentionedStudents == null) {
+      return [];
+    }
+
+    return await this.studentRepository
+      .createQueryBuilder('student')
+      .select('student.email')
+      .where('student.email IN (:...mentionedStudents)', {
+        mentionedStudents,
+      })
+      .andWhere('student.isSuspended = :isSuspended', { isSuspended: false })
+      .orderBy('student.email', 'ASC')
+      .getMany();
+  }
+
+  // Create teacher
   async create(createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {
+    const existingTeacher = await this.teacherRepository.findOne({
+      where: { email: createTeacherDto.email },
+    });
+    // check if teacher already exist
+    if (existingTeacher) {
+      throw new DuplicateRecordException(
+        `Teacher with the email ${createTeacherDto.email} already exists in the system`,
+      );
+    }
     const teacher = this.teacherRepository.create(createTeacherDto);
     return this.teacherRepository.save(teacher);
   }
 
-  // find all teacher
+  // Find all teacher
   async findAll(): Promise<TeacherEntity[]> {
     return await this.teacherRepository.find();
   }
 
-  //  find teacher
+  //  Find teacher  by id
   async findOne(id: number): Promise<TeacherEntity> {
     return await this.teacherRepository.findOne({ where: { id: id } });
   }
 
-  // update teacher
+  // Update teacher record
   async update(
     id: number,
     updateTeacherDto: UpdateTeacherDto,
@@ -126,7 +195,7 @@ export class TeachersService {
     return this.teacherRepository.save(teacher);
   }
 
-  // remove teacher
+  // Remove teacher record
   async remove(id: number): Promise<void> {
     await this.teacherRepository.delete(id);
   }
