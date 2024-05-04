@@ -6,6 +6,7 @@ import {
   Post,
   Put,
   Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import { StudentsService } from '../services/students.service';
@@ -31,14 +32,14 @@ export class StudentsController {
 
   //  get  a student record by id
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<StudentEntity> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<StudentEntity> {
     return this.studentService.findOne(id);
   }
 
   // update teacher by teacher id
   @Put(':id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateStudentDto: UpdateStudentDto,
   ): Promise<StudentEntity> {
     return this.studentService.update(id, updateStudentDto);
@@ -46,7 +47,7 @@ export class StudentsController {
 
   // delete  a teacher record by id
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.studentService.remove(id);
   }
 }

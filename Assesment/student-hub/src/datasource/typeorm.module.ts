@@ -18,7 +18,8 @@ import { Global, Module } from '@nestjs/common';
             password: process.env.DATABASE_PASSWORD,
             database: process.env.DATABASE_NAME,
             synchronize:
-              process.env.SYNC_DB === 'true' && process.env.NODE_ENV === 'DEV'
+              process.env.RUN_MIGRATION === 'true' &&
+              process.env.NODE_ENV === 'DEV'
                 ? true
                 : false,
             entities: [`${__dirname}/../**/**.entity{.ts,.js}`],

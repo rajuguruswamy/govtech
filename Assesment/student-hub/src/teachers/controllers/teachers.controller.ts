@@ -9,7 +9,9 @@ import {
   HttpCode,
   HttpStatus,
   Query,
-  HttpException,
+  Logger,
+  ParseIntPipe,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TeachersService } from '../services/teachers.service';
 import { CreateTeacherDto } from '../dto/create-teacher.dto';
@@ -20,9 +22,11 @@ import { CommonStudentsResponseDto } from '../dto/common-students.dto';
 import { SuspendStudentDto } from '../dto/suspend-student.dto';
 import { NotificationRecipientsDto } from '../dto/notification-recipients.dto';
 import { NotificationRequestDto } from '../dto/notification-request.dto';
+import { IsArray, IsNotEmpty } from 'class-validator';
 
 @Controller('/api')
 export class TeachersController {
+  private logger = new Logger('TeachersController');
   constructor(private readonly teacherService: TeachersService) {}
 
   //Register one or more students to a specified teacher.
@@ -31,15 +35,25 @@ export class TeachersController {
   async registerStudents(
     @Body() registerStudentsToTeachertDto: RegisterStudentsToTeachertDto,
   ): Promise<void> {
-    await this.teacherService.registerStudents(registerStudentsToTeachertDto);
+    try {
+      this.logger.verbose(
+        `Register students ${registerStudentsToTeachertDto.studentEmails} to the teacher ${registerStudentsToTeachertDto.teacherEmail}`,
+      );
+      await this.teacherService.registerStudents(registerStudentsToTeachertDto);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   // Get common students
   @Get('/commonstudents')
   @HttpCode(HttpStatus.OK)
   async getCommonStudents(
-    @Query('teacher') teacherEmail: string[],
+    @Query('teacher')
+    teacherEmail: string[],
   ): Promise<CommonStudentsResponseDto> {
+    this.logger.verbose(`Get common students for teacher : ${teacherEmail}`);
     try {
       const teachersEmailArray = Array.isArray(teacherEmail)
         ? teacherEmail
@@ -49,14 +63,8 @@ export class TeachersController {
         await this.teacherService.retriveCommonStudents(teachersEmailArray);
       return { students: studentEmails };
     } catch (error) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Internal Server Error',
-          message: 'An error occurred while retrieving common students.',
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.logger.error(error);
+      throw error;
     }
   }
 
@@ -66,8 +74,13 @@ export class TeachersController {
   async suspendStudent(
     @Body() suspendStudentDto: SuspendStudentDto,
   ): Promise<void> {
-    console.log(suspendStudentDto.student);
-    await this.teacherService.suspendStudent(suspendStudentDto);
+    this.logger.verbose(`Suspend student : ${suspendStudentDto.student}`);
+    try {
+      await this.teacherService.suspendStudent(suspendStudentDto);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   //Retrieve  student email for notifications
@@ -76,42 +89,86 @@ export class TeachersController {
   async retrieveForNotifications(
     @Body() notificationRequestDto: NotificationRequestDto,
   ): Promise<NotificationRecipientsDto> {
-    const recipients = await this.teacherService.retrieveForNotifications(
-      notificationRequestDto,
+    this.logger.verbose(
+      `Retrieve  student email for notifications : ${JSON.stringify(notificationRequestDto)}`,
     );
-    return { recipients: recipients };
+    try {
+      const recipients = await this.teacherService.retrieveForNotifications(
+        notificationRequestDto,
+      );
+      return { recipients: recipients };
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   //  Create new teacher
   @Post('/teachers')
   create(@Body() createTeacherDto: CreateTeacherDto): Promise<TeacherEntity> {
-    return this.teacherService.create(createTeacherDto);
+    this.logger.verbose(
+      `Create new teacher :  ${JSON.stringify(createTeacherDto)}`,
+    );
+
+    try {
+      return this.teacherService.create(createTeacherDto);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   //  Get all teachers
   @Get('/teachers')
   findAll(): Promise<TeacherEntity[]> {
-    return this.teacherService.findAll();
+    this.logger.verbose(`Get all teachers`);
+    try {
+      return this.teacherService.findAll();
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
-  //  Get  a teacher record by id
+  //  Get a teacher record by id
   @Get('/teachers/:id')
-  findOne(@Param('id') id: number): Promise<TeacherEntity> {
-    return this.teacherService.findOne(id);
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<TeacherEntity> {
+    this.logger.verbose(`Get teacher record by id : ${id} `);
+    try {
+      return this.teacherService.findOne(id);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   // Update teacher by teacher id
   @Put('/teachers/:id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateTeacherDto: UpdateTeacherDto,
   ): Promise<TeacherEntity> {
-    return this.teacherService.update(id, updateTeacherDto);
+    this.logger.verbose(
+      `Update teacher record by id : ${id} and body : ${JSON.stringify(updateTeacherDto)}`,
+    );
+    try {
+      return this.teacherService.update(id, updateTeacherDto);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   // Delete  a teacher record by id
   @Delete('/teachers/:id')
-  remove(@Param('id') id: number): Promise<void> {
-    return this.teacherService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    this.logger.verbose(`Delete teacher record by id : ${id} `);
+    try {
+      return this.teacherService.remove(id);
+      this.logger.verbose(``);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 }

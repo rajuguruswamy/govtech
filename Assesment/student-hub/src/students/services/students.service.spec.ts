@@ -26,22 +26,4 @@ describe('StudentsService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
-  // describe('create', () => {
-  //   it('should create a teacher', async () => {
-  //     const createStudentDto: CreateStudentDto = {
-  //       name: 'raju',
-  //       email: 'raju@gmail.com',
-  //     };
-
-  //     const studentEntity = new StudentEntity();
-  //     studentEntity.name = 'raju';
-  //     studentEntity.email = 'raju@gmail.com';
-  //     jest.spyOn(respository, 'create').mockReturnValue(studentEntity);
-  //     jest.spyOn(respository, 'save').mockResolvedValue(studentEntity);
-
-  //     const result = await service.create(createStudentDto);
-  //     expect(result).toEqual(studentEntity);
-  //   });
-  // });
 });
