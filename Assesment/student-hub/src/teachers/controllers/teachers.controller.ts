@@ -165,7 +165,7 @@ export class TeachersController {
     this.logger.verbose(`Delete teacher record by id : ${id} `);
     try {
       return this.teacherService.remove(id);
-      this.logger.verbose(``);
+      this.logger.verbose(`Delete  a teacher record by id ${id}`);
     } catch (error) {
       this.logger.error(error);
       throw error;

@@ -91,7 +91,7 @@ describe('TeachersService', () => {
     jest.spyOn(teacherService, 'getTechacherByEmail').mockResolvedValue(null);
 
     const registerStudentsToTeachertDto = {
-      teacherEmail: 'nonexistent@gmail.com',
+      teacherEmail: 'nonexistent_teacher@gmail.com',
       studentEmails: ['student1@gmail.com'],
     };
 
@@ -112,7 +112,7 @@ describe('TeachersService', () => {
 
     const registerStudentsToTeachertDto = {
       teacherEmail: 'teacher@gmail.com',
-      studentEmails: ['nonexistent@gmail.com'],
+      studentEmails: ['nonexistent_student@gmail.com'],
     };
 
     await expect(
