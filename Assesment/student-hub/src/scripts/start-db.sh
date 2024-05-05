@@ -1,9 +1,13 @@
 #!/bin/bash
 set -e
 
-SERVER="student_hub_db_server";
-PW="mysecretpassword";
-DB="student_hub";
+
+
+SERVER=student_hub_db_server;
+PW=$DATABASE_PASSWORD;
+DB=$DATABASE_NAME
+
+
 
 echo "echo stop & remove old docker [$SERVER] and starting new fresh instance of [$SERVER]"
 (docker kill $SERVER || :) && \

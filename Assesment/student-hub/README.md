@@ -20,10 +20,16 @@ Teachers need a system where they can perform administrative functions for their
 
    ```
 
-3. Create a .env file and assign values for DATABASE_USERNAME, DATABASE_PASSWORD and DATABASE_NAME
+3. Please open the setenv_localpostgres.sh file located in the src/scripts directory, and assign values to the DATABASE_USERNAME, DATABASE_PASSWORD, and DATABASE_NAME variables.
 
    ```
-      mv .env.text  .env
+      export DATABASE_HOSTNAME=localhost
+      export DATABASE_PORT=5432
+      export DATABASE_USERNAME=
+      export DATABASE_PASSWORD=
+      export DATABASE_NAME=
+      export NODE_PORT=3000
+      export NODE_ENV=DEV
 
    ```
 
