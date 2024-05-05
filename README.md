@@ -16,6 +16,7 @@ Teachers need a system where they can perform administrative functions for their
 
    ```
       cd ./govtech/Assesment/student-hub/
+      npm install
 
    ```
 
@@ -73,7 +74,7 @@ Teachers need a system where they can perform administrative functions for their
 | Endpoint                                           | HTTP Request Method | Description                                            |
 | -------------------------------------------------- | ------------------- | ------------------------------------------------------ |
 | http://localhost:3000/api/register                 | POST                | Register one or more students to a specified teacher.  |
-| http://localhost:3000/api/commonstudents           | GET                 | List of students common to a given list of teachers.   |
+| http://localhost:3000/api/commonstudents?teacher=  | GET                 | List of students common to a given list of teachers.   |
 | http://localhost:3000/api/suspend                  | POST                | Suspend a specified student.                           |
 | http://localhost:3000/api/retrievefornotifications | POST                | List of students who can receive a given notification. |
 

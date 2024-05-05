@@ -14,13 +14,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/teachers/",
+							"raw": "http://localhost:3000/api/teachers/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"teachers",
 								""
 							]
@@ -35,7 +36,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"stevenson\",\r\n    \"email\":\"stevenson@gmail.com\"\r\n}",
+							"raw": "{\r\n   \"email\": \"martin@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -43,13 +44,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/teachers",
+							"raw": "http://localhost:3000/api/teachers",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"teachers"
 							]
 						}
@@ -63,7 +65,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"teacherEmail\": \"stevenson@gmail.com\",\r\n  \"studentEmails\": [\"student4@gmail.com\",\"student5@gmail.com\"]\r\n}",
+							"raw": "{\r\n  \"teacherEmail\": \"mark@gmail.com\",\r\n  \"studentEmails\": [\"student1@gmail.com\",\r\n        \"student2@gmail.com\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -71,14 +73,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/teachers/register",
+							"raw": "http://localhost:3000/api/register",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"teachers",
+								"api",
 								"register"
 							]
 						}
@@ -92,7 +94,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"teacher\": \"stevenson@gmail.com\",\r\n  \"notification\": \"Hello students! @studentagnes@example.com @studentmiche@example.com\"\r\n}",
+							"raw": "{\r\n  \"teacher\": \"stevenson@gmail.com\",\r\n  \"notification\": \"Hello students! @studentagnes@example.com @studentmiche@example.com @student4@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -100,14 +102,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/teachers/retrievefornotifications",
+							"raw": "http://localhost:3000/api/retrievefornotifications",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"teachers",
+								"api",
 								"retrievefornotifications"
 							]
 						}
@@ -121,7 +123,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{  \r\n    \"student\":\"student44@gmail.com\"\r\n}",
+							"raw": "{  \r\n    \"student\":\"student4@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -129,14 +131,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/teachers/suspend",
+							"raw": "http://localhost:3000/api/suspend",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"teachers",
+								"api",
 								"suspend"
 							]
 						}
@@ -149,13 +151,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/teachers/1",
+							"raw": "http://localhost:3000/api/teachers/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"teachers",
 								"1"
 							]
@@ -169,14 +172,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/teachers/commonstudents?teacher=stevenson@gmail.com&teacher=raju@gmail.com",
+							"raw": "http://localhost:3000/api/commonstudents?teacher=stevenson@gmail.com&teacher=mark@gmail.com",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"teachers",
+								"api",
 								"commonstudents"
 							],
 							"query": [
@@ -186,7 +189,7 @@
 								},
 								{
 									"key": "teacher",
-									"value": "raju@gmail.com"
+									"value": "mark@gmail.com"
 								}
 							]
 						}
@@ -200,7 +203,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "",
+							"raw": "{\n    \"email\": \"mark@gmail.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -208,15 +211,16 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/teachers/2",
+							"raw": "http://localhost:3000/api/teachers/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"teachers",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -225,18 +229,19 @@
 				{
 					"name": "Delete Teacher",
 					"request": {
-						"method": "PUT",
+						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/teachers/2",
+							"raw": "http://localhost:3000/api/teachers/3",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"teachers",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -253,13 +258,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/students",
+							"raw": "http://localhost:3000/api/students",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"students"
 							]
 						}
@@ -272,13 +278,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/students/1",
+							"raw": "http://localhost:3000/api/students/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"students",
 								"1"
 							]
@@ -292,15 +299,16 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/students/4",
+							"raw": "http://localhost:3000/api/students/6",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"students",
-								"4"
+								"6"
 							]
 						}
 					},
@@ -313,7 +321,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"student1\",\r\n    \"email\":\"student1@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"email\":\"student11@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -321,15 +329,16 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/students/1",
+							"raw": "http://localhost:3000/api/students/6",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"students",
-								"1"
+								"6"
 							]
 						}
 					},
@@ -342,7 +351,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"student5\",\r\n    \"email\":\"student5@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"email\":\"student6@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -350,13 +359,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/students",
+							"raw": "http://localhost:3000/api/students",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"api",
 								"students"
 							]
 						}
@@ -364,6 +374,14 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Check Health",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	]
 }
