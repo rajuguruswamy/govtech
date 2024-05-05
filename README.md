@@ -9,24 +9,62 @@ Teachers need a system where they can perform administrative functions for their
 1. Clone the repository:
 
    ```
-
+      git clone https://github.com/rajuguruswamy/govtech.git
    ```
 
 2. Install dependencies:
 
    ```
+      cd ./govtech/Assesment/student-hub/
 
    ```
 
-3. Create a .env file:
+3. Create a .env file and assign values for DATABASE_USERNAME, DATABASE_PASSWORD and DATABASE_NAME
+
+   ```
+      mv .env.text  .env
 
    ```
 
-   ```
-
-4. Start the application:
+4. Start db server:
 
    ```
+      npm run start:dev:db
+
+   ```
+
+5. Create tables schema and seed data:
+
+   ```
+      npm run start:dev:seed
+
+   ```
+
+6. Start the application:
+
+   ```
+      npm run start:dev
+
+   ```
+
+7. check if a application server is running :
+
+   ```
+    http://localhost:3000/
+
+   ```
+
+8. run e2e test:
+
+   ```
+      npm run test:e2e
+
+   ```
+
+9. run unit test:
+
+   ```
+      npm run test
 
    ```
 
